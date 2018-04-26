@@ -1,4 +1,4 @@
-# Core Data Use Demonstrator
+# Core Data Modules Usage Demonstrator
 A simple example project which shows how to import and use a cleaning function from
 [CoreDataModules](https://github.com/AfricasVoices/CoreDataModules).
 
