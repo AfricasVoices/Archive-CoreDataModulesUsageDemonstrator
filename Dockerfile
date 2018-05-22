@@ -26,4 +26,6 @@ RUN if [ -d "/root/.ssh" ] || [ -d "/etc/ssh" ] || [ -d "app/.gh_rsa" ]; then ex
 # Make a directory for intermediate data
 RUN mkdir /app/data
 
+# USER and GENDER_COL are environment variables which need to be set when constructing this container e.g. via
+# docker run or docker container create. Use docker-run.sh to set these automatically.
 CMD pipenv run python clean_traced.py "$USER" "$GENDER_COL" data/input.json data/output.json
