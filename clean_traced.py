@@ -5,7 +5,7 @@ import time
 
 import jsonpickle
 from core_data_modules.cleaners.english.demographic_cleaner import DemographicCleaner
-from core_data_modules.traced_data import Metadata
+from core_data_modules import Metadata
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cleans a list of TracedData items")

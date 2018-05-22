@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-CoreDataModules = {git = "ssh://git@github.com/AfricasVoices/CoreDataModules.git", editable = true, ref = "fec44c01cb7a6465b0e56aa6ad490ef0521f0e8e"}
+CoreDataModules = {git = "ssh://git@github.com/AfricasVoices/CoreDataModules.git", editable = true, ref = "94ca8d17245f27fdb006491d79883b46b9cbb82d"}
 jsonpickle = "*"
 
 [dev-packages]
