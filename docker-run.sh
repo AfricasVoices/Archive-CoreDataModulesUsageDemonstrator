@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -ne 5 ]; then
-    echo "Usage: sh docker-run.sh <path_to_GitHub_key> <user> <gender-col> <input-file> <output-file>"
+if [ $# -ne 6 ]; then
+    echo "Usage: sh docker-run.sh <path_to_GitHub_key> <user> <gender-col> <input-file> <output-file> <coda-file>"
     exit
 fi
 
@@ -12,6 +12,7 @@ USER=$2
 GENDER_COL=$3
 INPUT_FILE=$4
 OUTPUT_FILE=$5
+CODA_FILE=$6
 
 # Copy key from the specified location to here, so that Docker can access it when building the image.
 cp "$GH_KEY" .gh_rsa
@@ -36,3 +37,4 @@ docker start -a -i "$container"
 
 # Copy the output data back out of the container
 docker cp "$container:/app/data/output.json" "$OUTPUT_FILE"
+docker cp "$container:/app/data/coda_export.csv" "$CODA_FILE"
