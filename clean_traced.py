@@ -18,7 +18,9 @@ if __name__ == "__main__":
     user = args.user[0]
     input_path = args.input[0]
     output_path = args.output[0]
+
     gender_col = args.gender[0]
+    gender_col_clean = "{}_clean".format(gender_col)
 
     with open(input_path, "r") as f:
         data = jsonpickle.decode(f.read())
@@ -26,7 +28,7 @@ if __name__ == "__main__":
     for td in data:
         cleaned = DemographicCleaner.clean_gender(td[gender_col])
         # Appending _clean follows AVF practice in Dreams
-        td.append_data({"{}_clean".format(gender_col): cleaned}, Metadata(user, "clean_traced.py", time.time()))
+        td.append_data({gender_col_clean: cleaned}, Metadata(user, Metadata.get_call_location(), time.time()))
 
     if not os.path.exists(os.path.dirname(output_path)):
         os.makedirs(os.path.dirname(output_path))
