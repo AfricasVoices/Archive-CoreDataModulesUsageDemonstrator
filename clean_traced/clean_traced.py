@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Clean data
     for td in data:
         cleaned = DemographicCleaner.clean_gender(td[gender_col])
-        td.append_data({gender_col_clean: cleaned}, Metadata(user, "clean_traced.py", time.time()))
+        td.append_data({gender_col_clean: cleaned}, Metadata(user, Metadata.get_call_location(), time.time()))
 
     # Write json output
     if not os.path.exists(os.path.dirname(json_output_path)):
@@ -52,6 +52,5 @@ if __name__ == "__main__":
         os.makedirs(os.path.dirname(coda_output_path))
 
     with open(coda_output_path, "wb") as f:
-        not_coded_data = filter(lambda td: td[gender_col_clean] == "NC", data)
-        not_coded_data_de_duped = {td[gender_col]: td for td in not_coded_data}.values()
-        TracedDataCodaIO.export_traced_data_iterable_to_coda(not_coded_data_de_duped, gender_col, "Contact UUID", f)
+        TracedDataCodaIO.export_traced_data_iterable_to_coda(
+            data, gender_col, f, exclude_coded_with_key=gender_col_clean)
