@@ -4,9 +4,10 @@ FROM python:2.7-slim
 RUN apt-get update && apt-get install -y git ssh
 RUN pip install pipenv
 
-# Add project to the container
+# Copy dependencies file.
 WORKDIR /app
-ADD . /app
+ADD Pipfile.lock /app
+ADD Pipfile /app
 
 # Copy the private GitHub key to the container.
 ADD .gh_rsa /root/.ssh/id_rsa
@@ -23,9 +24,12 @@ RUN rm -rf /root/.ssh /etc/ssh /app/.gh_rsa
 # Double check those directories were deleted. If they weren't, fail the build.
 RUN if [ -d "/root/.ssh" ] || [ -d "/etc/ssh" ] || [ -d "app/.gh_rsa" ]; then exit 1; fi
 
+# Copy the rest of the project
+ADD . /app
+
 # Make a directory for intermediate data
 RUN mkdir /app/data
 
 # USER and GENDER_COL are environment variables which need to be set when constructing this container e.g. via
 # docker run or docker container create. Use docker-run.sh to set these automatically.
-CMD pipenv run python clean_traced.py "$USER" "$GENDER_COL" data/input.json data/output.json
+CMD pipenv run python clean_traced.py "$USER" "$GENDER_COL" data/input.json data/output.json data/coda_export.csv
