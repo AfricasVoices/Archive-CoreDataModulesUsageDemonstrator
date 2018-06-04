@@ -1,12 +1,10 @@
 import argparse
-import json
 import os
 import time
 
-import jsonpickle
-from core_data_modules import Metadata
 from core_data_modules.cleaners.english.demographic_cleaner import DemographicCleaner
-from core_data_modules.traced_data.io import TracedDataCodaIO
+from core_data_modules.traced_data import Metadata
+from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataJsonIO
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cleans a list of TracedData items")
@@ -24,9 +22,9 @@ if __name__ == "__main__":
     gender_col = args.gender[0]
     gender_col_clean = "{}_clean".format(gender_col)  # Appending _clean follows AVF practice in Dreams
 
-    # Load data
+    # Load data from JSON file
     with open(input_path, "r") as f:
-        data = jsonpickle.decode(f.read())
+        data = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
 
     # Clean data
     for td in data:
@@ -34,23 +32,14 @@ if __name__ == "__main__":
         td.append_data({gender_col_clean: cleaned}, Metadata(user, Metadata.get_call_location(), time.time()))
 
     # Write json output
-    if not os.path.exists(os.path.dirname(json_output_path)):
+    if os.path.dirname(json_output_path) is not "" and not os.path.exists(os.path.dirname(json_output_path)):
         os.makedirs(os.path.dirname(json_output_path))
-
     with open(json_output_path, "w") as f:
-        # Serialize the list of TracedData to a format which can be trivially deserialized.
-        pickled = jsonpickle.dumps(data)
-
-        # Pretty-print the serialized json
-        pp = json.dumps(json.loads(pickled), indent=2, sort_keys=True)
-
-        # Write pretty-printed JSON to a file.
-        f.write(pp)
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
 
     # Write Coda output
-    if not os.path.exists(os.path.dirname(coda_output_path)):
+    if os.path.dirname(coda_output_path) is not "" and not os.path.exists(os.path.dirname(coda_output_path)):
         os.makedirs(os.path.dirname(coda_output_path))
-
-    with open(coda_output_path, "wb") as f:
+    with open(coda_output_path, "w") as f:
         TracedDataCodaIO.export_traced_data_iterable_to_coda(
             data, gender_col, f, exclude_coded_with_key=gender_col_clean)
