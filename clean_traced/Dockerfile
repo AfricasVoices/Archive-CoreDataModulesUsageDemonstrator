@@ -1,4 +1,4 @@
-FROM python:2.7-slim
+FROM python:3.6-slim
 
 # Install the tools we need.
 RUN apt-get update && apt-get install -y git ssh

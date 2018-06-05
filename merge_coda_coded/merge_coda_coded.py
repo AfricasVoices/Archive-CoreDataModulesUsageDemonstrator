@@ -1,8 +1,7 @@
 import argparse
-import json
+import os
 
-import jsonpickle
-from core_data_modules.traced_data.io import TracedDataCodaIO
+from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataJsonIO
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Applies Coda-coded data to TracedData JSON file")
@@ -22,21 +21,16 @@ if __name__ == "__main__":
     col_raw = args.raw_column[0]
     col_coded = args.coded_column[0]
 
-    # Load data
+    # Load data from a JSON file
     with open(json_input_path, "r") as f:
-        data = jsonpickle.decode(f.read())
+        data = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
 
-    # Read Coda input
-    with open(coda_input_path, "rb") as f:
+    # Merge Coda input into the data imported from the JSON
+    with open(coda_input_path, "r") as f:
         data = list(TracedDataCodaIO.import_coda_to_traced_data_iterable(user, data, col_raw, col_coded, f))
 
-    # Write new output
+    # Write merged output
+    if os.path.dirname(output_path) is not "" and not os.path.exists(os.path.dirname(output_path)):
+        os.makedirs(os.path.dirname(output_path))
     with open(output_path, "w") as f:
-        # Serialize the list of TracedData to a format which can be trivially deserialized.
-        pickled = jsonpickle.dumps(data)
-
-        # Pretty-print the serialized json
-        pp = json.dumps(json.loads(pickled), indent=2, sort_keys=True)
-
-        # Write pretty-printed JSON to a file.
-        f.write(pp)
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)

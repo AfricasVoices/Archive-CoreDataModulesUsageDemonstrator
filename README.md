@@ -57,6 +57,8 @@ This project was developed with pipenv version 2018.05.18.
         1. `<input-file>` is a JSON file containing a list of the TracedData objects to be coded using the Coda file,
         1. `<coda-input-file>` is the Coda file containing manually coded messages, and
         1. `<output-file>` is where the output JSON file should be written to.
+        
+Both projects are configured to use Python 3.6 by default but all code is Python 2.7 compliant as well.
 
 ### Running in Docker
 1. Install Docker. This project was tested with Docker version 18.03.0-ce, build 0520e24 on macOS.
